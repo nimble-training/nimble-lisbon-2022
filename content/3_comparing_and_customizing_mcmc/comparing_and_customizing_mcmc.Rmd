@@ -816,3 +816,4 @@ farmEffectCols <- grep('farm_effect', colnames(DEsamples))
 ts.plot(rowMeans(DEsamples[ , farmEffectCols]), ylab = 'random effect mean', main = 'farm_effect mean')
 ```
 
+We'll focus on these issues in the next module.

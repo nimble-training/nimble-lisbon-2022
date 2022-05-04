@@ -370,8 +370,8 @@ Let's consider passing `farm_ids` either in `constants` or in `data`.
 ```{r}
 DEconstants <- list(num_farms = 24,
                     num_animals = 826,
-                    cLength = DeerEcervi$cLength,
-                    sex = DeerEcervi$Sex,
+                    cLength = DeerEcervi$ctr_length,
+                    sex = DeerEcervi$sex,
                     farm_ids = DeerEcervi$farm_ids)
 DEdata <- list(Ecervi_01 = DeerEcervi$Ecervi_01)
 
@@ -379,9 +379,9 @@ m_light <- nimbleModel(DEcode, constants = DEconstants)
 
 DEconstants <- list(num_farms = 24,
                     num_animals = 826,
-                    cLength = DeerEcervi$cLength)
+                    cLength = DeerEcervi$ctr_length)
 DEdata <- list(Ecervi_01 = DeerEcervi$Ecervi_01,
-                    sex = DeerEcervi$Sex,
+                    sex = DeerEcervi$sex,
                     farm_ids = DeerEcervi$farm_ids)
 m_heavy <-  nimbleModel(DEcode, data = DEdata, constants = DEconstants)
 ```
