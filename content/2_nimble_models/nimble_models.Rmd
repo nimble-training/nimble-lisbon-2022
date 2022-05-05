@@ -567,6 +567,37 @@ You may not know where there are lifted nodes.
 
 Always determine what to `calculate` or `simulate` from `getDependencies` or other such tools.
 
+# Initial values 
+
+A common cause of user problems is bad or incomplete initial values for an MCMC.
+
+NIMBLE will simulate initial values from the prior distribution but this can cause problems in various situations:
+
+ - with vague priors, one can get very bad initial values
+    - in particular, can get probabilities of 0 or 1, which may not be valid in a given model
+ - with constraints, simulated values may not satisfy a constraint
+ - with truncation, there may be numerical problems if far out in the tail of a distribution
+
+```{r, bad-inits}
+DEmodel <- nimbleModel(DEcode, data = DEdata, constants = DEconstants)
+DEmodel$calculate()
+DEmodel$getVarNames()
+DEmodel$calculate('Ecervi_01')
+DEmodel$sex_int
+
+DEmodel$simulate(DEmodel$getNodeNames())  # by default won't simulate into data nodes
+DEmodel$sex_int   # extreme!
+DEmodel$calculate()
+DEmodel$calculate('sex_int')
+DEmodel$calculate('length_coef')
+DEmodel$calculate('farm_effect')
+
+DEmodel$calculate('Ecervi_01')
+head(DEmodel$disease_probability, n = 50)
+```
+
+
+
 # Exercises
 
 1) Please run through the code from this module and use the commands discussed to understand the nodes and dependency structure of the deer E. cervi example.

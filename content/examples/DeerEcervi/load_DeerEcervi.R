@@ -5,14 +5,14 @@ DeerEcervi <- read.table('DeerEcervi.txt', header = TRUE)
 DeerEcervi$Ecervi_01 <- DeerEcervi$Ecervi
 DeerEcervi$Ecervi_01[DeerEcervi$Ecervi>0] <- 1
 ## Set up naming convention for centered and uncentered lengths for exercises later
-DeerEcervi$unctrLength <- DeerEcervi$Length
+DeerEcervi$unctr_length <- DeerEcervi$length
 ## Center Length for better interpretation
-DeerEcervi$ctrLength <- DeerEcervi$Length - mean(DeerEcervi$Length)
+DeerEcervi$ctr_length <- DeerEcervi$length - mean(DeerEcervi$length)
 ## Make a factor version of Sex for plotting
-DeerEcervi$fSex <- factor(DeerEcervi$Sex)
+DeerEcervi$sex_factor <- factor(DeerEcervi$sex)
 ## Make a factor and id version of Farm
-DeerEcervi$fFarm <- factor(DeerEcervi$Farm)
-DeerEcervi$farm_ids <- as.numeric(DeerEcervi$fFarm)
+DeerEcervi$farm_factor <- factor(DeerEcervi$farm)
+DeerEcervi$farm_ids <- as.numeric(DeerEcervi$farm_factor)
 
 DEcode <- nimbleCode({
   for(i in 1:2) {
@@ -39,8 +39,8 @@ DEcode <- nimbleCode({
 
 DEconstants <- list(num_farms = 24,
                     num_animals = 826,
-                    length = DeerEcervi$ctrLength,
-                    sex = DeerEcervi$Sex,
+                    length = DeerEcervi$ctr_length,
+                    sex = DeerEcervi$sex,
                     farm_ids = DeerEcervi$farm_ids)
 
 DEdata <- list(Ecervi_01 = DeerEcervi$Ecervi_01)
