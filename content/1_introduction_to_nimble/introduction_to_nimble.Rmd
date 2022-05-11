@@ -82,7 +82,7 @@ ggplot(data = DeerEcervi,
         mapping = aes(x = ctr_length, y = Ecervi_01, color = sex_factor)) + 
   geom_point() + 
   geom_jitter(width = 0, height = 0.1) + 
-  facet_wrap(~Farm)
+  facet_wrap(~farm)
 ```
 
 `sex_factor` is 1 for males, 2 for females.

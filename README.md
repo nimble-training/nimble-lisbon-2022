@@ -11,9 +11,10 @@ All materials for the workshop will be in this GitHub repository. If you're fami
 
 There is some overview information [here (https://htmlpreview.github.io/?https://github.com/nimble-training/nimble-lisbon-2022/blob/main/overview.html), including links to the content modules in order.
 
+
 ## Tentative Schedule
 
-Day 1 (Wednesday June 1; 9h-12h and 14h-17h):   
+Day 1 (Wednesday June 1; 9h-12:30h and 14h-17h):   
 
 - Introduction to NIMBLE
 - Writing models in NIMBLE
@@ -21,16 +22,18 @@ Day 1 (Wednesday June 1; 9h-12h and 14h-17h):
 - Strategies for improving MCMC
 - Writing your own functions and distributions for NIMBLE models
 
-Day 2 (Thursday June 2; 9h-12h and 14h-17h):
+Day 2 (Thursday June 2; 9h-12:30h and 14h-17h):
 - Introduction to programming algorithms (using nimbleFunctions) in NIMBLE
 - Model selection and Bayesian nonparametrics
-- Spatial modeling and state-space models
-- Sequential Monte Carlo and particle MCMC
-
-Day 3 (Friday June 3; half day 9h-12h):
-
 - Advanced algorithm programming (writing your own MCMC sampler, calling out to R and C++, and more)
+- Spatial modeling
+
+Day 3 (Friday June 3; half day 9h-12:30h):
+
+- Spatial modeling
+- State space models
 - Special topics based on participant interests and discussion of participants' research projects 
+- (Time permitting) Sequential Monte Carlo and particle MCMC
 
 ## Help with NIMBLE
 

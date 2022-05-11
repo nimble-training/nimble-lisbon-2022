@@ -111,7 +111,7 @@ More details can also be found in Section 4 of the [NIMBLE manual](https://r-nim
 
 - NIMBLE is/has been supported by NSF grants DBI-1147230, ACI-1550488, and DMS-1622444, with additional support provided by postdoctoral funding for D. Turek from the Berkeley Institute for Data Science and Google Summer of Code fellowships for N. Michaud (2015) and C. Lewis-Beck (2017).
 
-# Outline (UNDER CONSTRUCTION)
+# Outline
 
 Here are the modules we'll work through for this short course.
 
@@ -127,12 +127,15 @@ Here are the modules we'll work through for this short course.
 
     - [6. Basic programming in NIMBLE](content/6_intro_nimblefunctions/intro_nimblefunctions.html)
     - [7. Model selection, including Bayesian nonparametrics](content/7_model_selection_bnp/model_selection_bnp.html)
-    - [8 Spatial modeling and state-space models](content/8_spatial_models/spatial_models.html)
-    - [9 Sequential Monte Carlo](content/...)
+    - [8. Programming in NIMBLE](content/8_programming/programming.html)
+    - [9. (first half) Spatial modeling and state-space models](content/9_spatial_models/spatial_models.html)
   
  - Day 3
- 
-
-    - [10. Programming in NIMBLE](content/10_programming/nimblefunction_programming.html)
+    - [9. (second half) Spatial modeling and state-space models](content/9_spatial_models/spatial_models.html)
+    - [10. State space model example](content/10_state_space/state_space.html)
+    - [11. (extra material) Sequential Monte Carlo](content/11_smc/smc.html)
+    - Discussion of workshop participants' personal projects
+    - [12. Conclusions](content/12_future_directions_for_nimble/future_directions_for_nimble.html)
+    
 
 

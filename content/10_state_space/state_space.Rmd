@@ -1,0 +1,374 @@
+---
+title: "Customizing NIMBLE using state-space models as an example"
+subtitle: "NIMBLE 2022 Lisbon Workshop"
+author: "NIMBLE Development Team"
+date: "June 2022"
+output:
+  slidy_presentation: default
+  beamer_presentation: default
+---
+<style>
+slides > slide {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+}
+</style>
+
+```{r chunksetup, include=FALSE} 
+library(nimble)
+```
+
+# Basic state space modeling structures
+
+Consider a basic state-space model.
+
+Observation equation: $y_t \sim f(y_t | x_t, \theta_y)$.  
+
+State equation: $x_t \sim g(x_t | x_{t-1}, \theta_x)$
+
+This is well-studied (also known as a Hidden Markov model) and there are various results regarding standard approaches to inference:
+
+- filtering:
+   - forward algorithm for drawing from distribution for $x_t | y_{1:t}, \theta$
+- smoothing:
+   - forward filtering, backward sampling (FFBS) algorithm for drawing from distribution for $x_t|x_{-t},y_{1:T},\theta$
+- inference: forward algorithm produces marginalized (over $x$) likelihood for $\theta$ ($[y_{1:T}|\theta]$)
+
+# Think like a graph
+
+Consider a basic state-space model.
+
+Observation equation: $y_t \sim f(y_t | x_t)$.  (Parameters are not shown.)
+
+State equation: $x_t \sim g(x_t | x_{t-1})$
+
+Two equivalent ways to write state-space models:
+
+1. Process-noises are random variables.  States are deterministic given process noises. 
+
+```{r}
+code_heavy <- nimbleCode({
+  for(t in 1:n) 
+    y[t] ~ dnorm(x[t], sd = sigma)
+  for(t in 2:n) {
+    x[t] <- x[t-1] + eps[t-1]
+    eps[t] ~ dnorm(0, sd = omega)
+  }
+})
+```
+
+2. States are random variables.
+
+```{r}
+code_light <- nimbleCode({
+  for(t in 1:n) 
+    y[t] ~ dnorm(x[t], sd = sigma)
+  for(t in 2:n)
+    x[t] ~ dnorm(x[t-1], sd = omega)
+})
+```
+
+# Think like a graph: reducing dependencies (2)
+
+```{r}
+n <- 20
+m_heavy <- nimbleModel(code_heavy, 
+                       data = list(y = rnorm(n)), 
+                       constants = list(n = n))
+m_light <- nimbleModel(code_light, 
+                       data = list(y = rnorm(n)), 
+                       constants = list(n = n))
+```
+
+What calculations are required to update `eps[18]` or `eps[1]` compared to `x[18]` or `x[1]`?
+
+```{r}
+m_heavy$getDependencies('eps[18]')
+m_light$getDependencies('x[18]')
+
+m_heavy$getDependencies('eps[1]')
+m_light$getDependencies('x[1]')
+```
+
+`eps[1]` affects all the `x[t]` values and therefore all the `y[t]` values! 
+
+# Discrete states and marginalization
+
+We'll only discuss discrete states.
+
+With a discrete random variable, one can always (in principle) marginalize by summing over the potential values.
+
+ - nimbleEcology package provides user-defined distributions for discrete observations, marginalizing over the states using the forward algorithm
+    - key aspect is that the observation equation involves detection probabilities, which can account for errors in the observed value
+    - one state is often "unobserved"
+    - detection probabilities and transition probabilities can be time-varying or not
+ - Here, I'll discuss continuous observations, with an example of a precipitation model following Stoner and Economou (2020) and Paciorek et al. (in preparation)
+    - accounts for missing observations in the forward algorithm
+    - forward filtering, backward sampling for imputation of missing values
+    - "tricks" in nimble model code to reduce computation
+    
+# MCMC considerations
+
+Marginalization:
+
+  - Reduces number of parameters - generally good for MCMC performance.
+  - Sampling non-marginalized models is slow because of:
+      - high-dimensional, correlated parameter space to explore
+      - particularly tricky with discrete states
+      - dependence between states and parameters
+         
+# Basic forward algorithm:
+
+Leaving out $\theta$ for easier notation, we have:
+
+$$
+\delta_{k} = p_{0,k} f(y_1 | x_1 = k); k = 1, \ldots, K
+$$
+$$
+p(y_1) = \sum_j \delta_{j}
+$$
+$$
+\alpha_{1,k} = \delta_{k} / \sum_j\alpha_{1,j}
+$$
+
+Proceed for $t = 2, \ldots, T$:
+
+$$
+p(k) = \sum_j \alpha_{t,j} p_t(k|j)
+$$
+$$
+\delta_{k} = p(k) f(y_t | x_t = k)
+$$
+$$
+p(y_t| y_{1:{t-1}}) = \sum_j \delta_{j}
+$$
+$$
+\alpha_{t+1,k} = \delta_{k} / \sum_j \delta_{j}
+$$
+
+where $p_t(k|j)$ is the transition probability from state $j$ to $k$.
+
+If $y_t$ is missing, set $f(y_t | x_t = k) = 1$. One just propagates the current distribution over the states forward using the transition probabilities.
+
+One can do a similar manipulation to work with hold-out data.
+
+# Forward algorithm using a nimbleFunction
+
+ - `p_init`: initial distribution over states
+ - `p_trans`: time-varying transition matrix
+ - `dens`: each row is density for an observation for each of the K states
+
+```
+forwardAlg <- nimbleFunction(run=function(p_init=double(1), p_trans = double(3),
+                                      n = double(0), K = double(0), 
+                                      dens=double(2), missing=double(1)) {
+  p <- rep(0, K)
+  c <- numeric(n)
+  if(missing[1]) {
+       delta <- p_init
+       c[1] <- 1
+  } else {
+       delta <- dens[1,]*p_init
+       c[1] <- sum(delta)
+  }
+  alpha <- delta/c[1]   # new prob. of being in each state
+
+  for(t in 2:n) {
+    for(k in 1:K) {
+      ## p_trans[j,k,t-1] is probability of going from j to k at time t
+      p[k] <- sum(alpha*p_trans[,k,t-1])  
+    }
+    if(missing[t])
+      delta <- p
+      c[t] <- 1     # simply propagate forward
+    } else {  
+      delta <- dens[t,]*p     # learn from data
+      c[t] <- sum(delta)
+    }
+    alpha <- delta/c[t]
+  }
+  returnType(double(0))
+  return(sum(log(c)))
+})
+```
+
+# Embedding the marginalization in a nimble model
+
+Here are the core pieces of the marginalized model
+
+```
+y[1:n] ~ dobs(p_init[1:K], p_trans[1:K,1:K,1:T], n, K, theta_y[1:K, 1:2], missingness[1:n])
+p_init[1:K] ~ ddirch(alpha[1:K])
+p_trans[1:K, 1:K, 1:T] <- trans_function(theta_x, ....)  # perhaps covariate- or spline-based
+```
+
+Then we need a user-defined `dobs` that calculates the density under each state and runs the forward algorithm:
+
+```
+dobs <- nimbleFunction(
+  run = function(x=double(1), p_init = double(1), p_trans = double(3),
+                 n = double(0), K = double(0),theta_y = double(2),
+  missingness = double(1), log = integer(0)) {
+  
+    dens <- matrix(nrow = n, ncol = K)
+    for(k in 1:K)
+      dens[ , k] <- dgamma(x, theta_y[k, 1], theta_y[k, 2], log = FALSE)
+      
+    returnType(double(0))
+    return(forwardAlg(p_init, p_trans, n, K, dens, missingness))
+  }
+)
+```
+
+# Using some tricks to reduce computation
+
+Comment: there are parameters that affect the transition probabilities and parameters that affect the observation density values.
+
+What is inefficient about what we've done above? (Let's draw out the model graph.)
+
+# Using some tricks to reduce computation
+
+Instead of recalculating the density whenever we update the transition probabilities (e.g., sampling $\theta_x$), let's break apart the calculation.
+We'll basically be modifying the model graph to cache (save) the density values.
+
+```
+proxy_y ~ dproxy(dens[1:n, 1:K], n, K, p_init[1:K], p_trans[1:K, 1:K, 1:T], missingness[1:n])
+dens[1:n, 1:K] <- calc_dens(y[1:n], n, K, theta_y[1:K, 1:2])
+```
+
+`proxy_y` is a dummy value that is not actually used in calculating the density of the observations.
+
+Here are our modified nimbleFunctions:
+
+```
+dproxy <- nimbleFunction(
+    run = function(x = double(0), dens = double(2), p_init = double(1), p_trans = double(3),
+                   N = double(0), K = double(0), missingness = double(1), log = integer(0)) {                     
+        returnType(double(0))
+        return(forwardAlg(p_init, p_trans, n, K, dens, missingness))
+    }
+)
+
+calc_dens <- nimbleFunction(
+  run = function(x = double(1), N = double(0), K = double(0), theta_y[1:K, 1:2]) {
+    
+    dens <- matrix(nrow = n, ncol = K)
+    for(k in 1:K)
+      dens[ , k] <- dgamma(x, theta_y[k, 1], theta_y[k, 2], log = FALSE)
+    returnType(double(2))
+    return(dens)
+  }
+)
+```
+
+# Imputation using FFBS
+
+Finally, let's set up the model to impute missing values using FFBS via a user-defined sampler. Again, there will be a few tricks.
+
+In model code:
+
+```
+if(IMPUTE)   ## if-then-else to define model with or without imputation
+  imputed[1:n_missing] ~ dimpute()
+```
+
+A 'dummy' user-defined distribution so that the imputed values have no impact on the main MCMC sampling:
+
+```
+dimpute <- nimbleFunction(
+  run = function(x = double(1), log = integer(0)) {    
+      returnType(double(0))
+      if(log) return(0) else return(1)
+  }
+)
+```
+
+# The FFBS sampler
+
+Here's a partial code for the FFBS sampler.
+
+(Caution -- this is simplified from some real code so may have some errors/typos.)
+
+
+```
+sampler_impute_ffbs <- nimbleFunction(
+    name = 'sampler_impute_ffbs',
+    contains = sampler_BASE,
+    setup = function(model, mvSaved, target, control) {
+        n  <- control$n_missing
+        missingness <- control$missingness 
+        K <- control$K
+        thin <- control$thin
+        n <- length(model$y)
+        idx_thin <- 1
+        alpha <- matrix(0, K, n)
+        timesRan <- 0
+    },
+    run = function() {
+        ## This combines density calculation and forward algorithm 
+        timesRan <<- timesRan + 1
+        if(idx_thin %% thin == 0) {  # only sample at interval we are saving output
+            idx_miss <- 1
+            
+            #### Forward filtering ####
+            
+            p <- rep(0, K)
+            if(missingness[]) {
+                 alpha[ , 1] <<- model[['P_zero']]
+                 if(idx_miss > n_missing) stop("idx_miss out of bounds")
+                 idx_miss <- idx_miss + 1
+            } else {
+                 delta <- model[['dens']][1,]*model[['p_init']]
+                 alpha[ , 1] <<- delta/sum(delta)
+            }
+            for(t in 2:n){
+                for(k in 1:K)
+                   p[j] <- sum(alpha[ , t-1]*p_trans[, k, t-1])
+                if(missingness[t]) {
+                   delta <- p
+                   if(idx_miss > n_missing) stop("idx_miss out of bounds")
+                   idx_miss <- idx_miss + 1
+                } else delta <- model[['dens']][t, ]*p
+                alpha[ , t] <<- delta/sum(delta)
+            }
+            idx_miss <- idx_miss - 1
+
+            #### Backward sampling ####
+            
+            x <- 1  # otherwise get complaint about x not created yet
+            for(trev in 1:n) {  # no reverse indexing in nimble
+               t <- n-trev+1
+               if(t == n) { # don't condition on the future
+                   probs <- alpha[ , t]
+               } else {
+                   probs <- alpha[ , t] * p_trans[ , x, t]
+               }
+               x <- rcat(1, probs)  # sample unknown state
+               if(missingness[t]) {
+                  if(idx_miss < 1 | idx_miss > n_missing)
+                     stop("Problem with missingness indexing.")
+                  ## Sample observation given sampled state
+                  model[[target]][idx_miss] <- rgamma(1, model[['theta_y']][x, 1], model[['theta_y']][x, 2])
+                  idx_miss <- idx_miss - 1
+               }
+             }
+        }
+        nimCopy(from = model, to = mvSaved, row = 1, nodes = target, logProb = FALSE)
+        idx_thin <<- idx_thin + 1
+    },
+    methods = list(
+        reset = function() {}
+    )
+)    
+
+
+```
+
+Assign the FFBS sampler to the original MCMC:
+
+```
+if(IMPUTE) {
+    conf$removeSamplers('imputed')
+    conf$addSampler(paste0('imputed[1:', n_missing, ']'), 'impute_ffbs',
+                              control = list(n_missing, missingness = missingness, K = K))
+```  
