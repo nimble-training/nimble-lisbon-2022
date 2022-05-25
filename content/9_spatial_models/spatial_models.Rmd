@@ -172,10 +172,11 @@ library(CARBayesdata, quietly = TRUE)
 library(sp, quietly = TRUE)
 library(spdep, quietly = TRUE)
 library(classInt)
-data(GGHB.IG)
+## data(GGHB.IG) ## apparently no longer in CARBayesdata
+load('GGHB.IG.Rda')
 data(respiratorydata)
 
-respiratorydata_sp <- merge(x = GGHB.IG, y = respiratorydata, by = "IG", all.x = FALSE)
+respiratorydata_sp <- merge(x = GGHB.IG, y = respiratorydata, by.x = "IG", by.y = "IZ", all.x = FALSE)
 respiratorydata_sp <- spTransform(respiratorydata_sp,
                                   CRS("+proj=longlat +datum=WGS84 +no_defs"))
 

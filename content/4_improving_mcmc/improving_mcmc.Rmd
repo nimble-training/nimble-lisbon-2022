@@ -337,7 +337,7 @@ mcmcResults_jags_uncLen <- compareMCMCs(
 
 ### Combine and visualize results 
 
-```{r, echo=FALSE, val=doComparisons}
+```{r, echo=FALSE, val=doComparisons&has_compareMCMCs}
 mcmcResults_ctrRE <- c(mcmcResults_nimble_ctrRE)
 mcmcResults_uncLen <- c(mcmcResults_nimble_uncLen,
                  mcmcResults_jags_uncLen) ## These are lists of MCMCresult objects

@@ -1057,10 +1057,10 @@ standard deviation must be positive.</p>
 ## Warning in dnorm(model$y[getNodeFunctionIndexedInfo(INDEXEDNODEINFO_, 1)], :
 ## NaNs produced</code></pre>
 <pre><code>##    user  system elapsed 
-##   6.667   0.017   6.684</code></pre>
+##   8.478   0.000   8.479</code></pre>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(optC <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>), cObjective<span class="sc">$</span>run, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">fnscale =</span> <span class="sc">-</span><span class="dv">1</span>)))</span></code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.002   0.000   0.002</code></pre>
+##   0.002   0.000   0.003</code></pre>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>optR</span></code></pre></div>
 <pre><code>## $par
 ## [1] 0.2551346 0.5781320 0.2329039

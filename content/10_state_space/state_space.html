@@ -815,7 +815,7 @@ via a user-defined sampler. Again, there will be a few tricks.</p>
 <p>A ‘dummy’ user-defined distribution so that the imputed values have
 no impact on the main MCMC sampling:</p>
 <pre><code>dimpute &lt;- nimbleFunction(
-  run = function(x=double(1), log = integer(0)) {    
+  run = function(x = double(1), log = integer(0)) {    
       returnType(double(0))
       if(log) return(0) else return(1)
   }
@@ -823,14 +823,15 @@ no impact on the main MCMC sampling:</p>
 </div>
 <div id="the-ffbs-sampler" class="slide section level1">
 <h1>The FFBS sampler</h1>
-<p>Here’s a partial code for the FFBS sampler (caution – this is
-simplified from some real code so may have some errors):</p>
+<p>Here’s a partial code for the FFBS sampler.</p>
+<p>(Caution – this is simplified from some real code so may have some
+errors/typos.)</p>
 <pre><code>sampler_impute_ffbs &lt;- nimbleFunction(
     name = &#39;sampler_impute_ffbs&#39;,
     contains = sampler_BASE,
     setup = function(model, mvSaved, target, control) {
         n  &lt;- control$n_missing
-        missingness &lt;- control$missingness  # weird compilation failure if name variable as &#39;missing&#39;
+        missingness &lt;- control$missingness 
         K &lt;- control$K
         thin &lt;- control$thin
         n &lt;- length(model$y)
@@ -843,7 +844,9 @@ simplified from some real code so may have some errors):</p>
         timesRan &lt;&lt;- timesRan + 1
         if(idx_thin %% thin == 0) {  # only sample at interval we are saving output
             idx_miss &lt;- 1
-            ## Forward filtering
+            
+            #### Forward filtering ####
+            
             p &lt;- rep(0, K)
             if(missingness[]) {
                  alpha[ , 1] &lt;&lt;- model[[&#39;P_zero&#39;]]
@@ -865,19 +868,22 @@ simplified from some real code so may have some errors):</p>
             }
             idx_miss &lt;- idx_miss - 1
 
-            ## Backward sampling
-            z &lt;- 1  # otherwise get complaint about z not created yet
+            #### Backward sampling ####
+            
+            x &lt;- 1  # otherwise get complaint about x not created yet
             for(trev in 1:n) {  # no reverse indexing in nimble
                t &lt;- n-trev+1
                if(t == n) { # don&#39;t condition on the future
                    probs &lt;- alpha[ , t]
                } else {
-                   probs &lt;- alpha[ , t] * p_trans[ , z, t]
+                   probs &lt;- alpha[ , t] * p_trans[ , x, t]
                }
-               z &lt;- rcat(1, probs)
+               x &lt;- rcat(1, probs)  # sample unknown state
                if(missingness[t]) {
-                  if(idx_miss &lt; 1 | idx_miss &gt; n_missing) stop(&quot;Problem with missingness indexing.&quot;)
-                  model[[target]][idx_miss] &lt;- rgamma(1, model[[&#39;theta_y&#39;]][zReal, 1], model[[&#39;theta_y&#39;]][zReal, 2])
+                  if(idx_miss &lt; 1 | idx_miss &gt; n_missing)
+                     stop(&quot;Problem with missingness indexing.&quot;)
+                  ## Sample observation given sampled state
+                  model[[target]][idx_miss] &lt;- rgamma(1, model[[&#39;theta_y&#39;]][x, 1], model[[&#39;theta_y&#39;]][x, 2])
                   idx_miss &lt;- idx_miss - 1
                }
              }
