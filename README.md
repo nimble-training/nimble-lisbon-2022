@@ -9,7 +9,7 @@ To prepare for the workshop:
 
 All materials for the workshop will be in this GitHub repository. If you're familiar with Git/GitHub, you already know how to get all the materials on your computer. If you're not, simply click [here](https://github.com/nimble-training/nimble-lisbon-2022/archive/main.zip).
 
-There is some overview information [here](https://htmlpreview.github.io/?https://github.com/nimble-training/nimble-lisbon-2022/blob/main/overview.html), including links to the content modules in order.
+There is some overview information [here](https://htmlpreview.github.io/?https://github.com/nimble-training/nimble-lisbon-2022/blob/main/overview.html), including links to the content modules in order, but to prepare for the workshop, you can simply read through the information below and test that your NIMBLE installation is working as described below.
 
 
 ## Tentative Schedule
