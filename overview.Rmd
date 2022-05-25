@@ -30,7 +30,7 @@ Please ask questions and make comments as we go through the material.
 
 # How we'll operate
 
-The workshop will be organized in modules, each of which will be a combination of lecture/demo presentation. 
+The workshop will be organized in modules, each of which will be a combination of lecture/demo presentation. At the end of some of the modules there will be time for you to try things out yourself. And during the modules, I expect we'll have some discussion based on questions that you ask.
 
 # Suggestions on how to get the most out of the workshop
 
@@ -40,7 +40,6 @@ We encourage you to:
 -  keep your eyes open! -- We'll illustrate a lot of syntax and concepts by example
 - try to guess what the syntax means in cases we haven't yet seen that syntax
 - play with it and try variations and try to break it and see what happens
-- post a comment on Slack or the Zoom chat if something interesting happens as you experiment
 - ask questions!
 
 
