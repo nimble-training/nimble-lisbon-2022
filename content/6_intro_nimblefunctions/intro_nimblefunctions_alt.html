@@ -384,7 +384,7 @@ that algorithms are implemented. They can also be used for</p>
 <ul>
 <li>user-defined BUGS distributions (already seen),</li>
 <li>user-defined BUGS functions (already seen)</li>
-<li>user-defined MCMC samplers (Module 9), and</li>
+<li>user-defined MCMC samplers (Module 8), and</li>
 <li>compiling parts of R (not shown), without using a model.</li>
 </ul>
 <p>But their main purpose is providing a way for developers to implement
@@ -440,7 +440,7 @@ calcDeps_regr$run()   ## second stage: run code</code></pre>
 </div>
 <div id="some-notes" class="section level1">
 <h1>Some notes</h1>
-<p>We could compiled <code>calcDeps_regr</code>. Then <code>run</code>
+<p>We could compile <code>calcDeps_regr</code>. Then <code>run</code>
 would become a method of a C++ class.</p>
 <p>Notice that:</p>
 <ul>
@@ -563,6 +563,7 @@ you can use within a nimbleFunction.)</p>
 <pre class="r"><code>objective &lt;- nimbleFunction(
     setup = function(model, nodes) {
         calcNodes &lt;- model$getDependencies(nodes)
+        cat(&quot;The calcNodes are &quot;, paste0(calcNodes, sep = &#39;,&#39;), &quot;\n&quot;)
         elements &lt;- model$expandNodeNames(nodes, returnScalarComponents = TRUE)
         n &lt;- length(elements)
     },
@@ -584,8 +585,9 @@ standard deviation must be positive.</p>
 </div>
 <div id="specializing-the-nimblefunction-to-the-model" class="section level1">
 <h1>Specializing the nimbleFunction to the model</h1>
-<pre class="r"><code>rObjective &lt;- objective(regrModel, c(&#39;b0&#39;, &#39;b1&#39;, &#39;sigma&#39;))
-cRegrModel &lt;- compileNimble(regrModel)   # remember to compile model first</code></pre>
+<pre class="r"><code>rObjective &lt;- objective(regrModel, c(&#39;b0&#39;, &#39;b1&#39;, &#39;sigma&#39;))</code></pre>
+<pre><code>## The calcNodes are  b0, b1, sigma, lifted_b0_plus_b1_times_x_oBi_cB_L5[1], lifted_b0_plus_b1_times_x_oBi_cB_L5[2], lifted_b0_plus_b1_times_x_oBi_cB_L5[3], lifted_b0_plus_b1_times_x_oBi_cB_L5[4], lifted_b0_plus_b1_times_x_oBi_cB_L5[5], lifted_b0_plus_b1_times_x_oBi_cB_L5[6], lifted_b0_plus_b1_times_x_oBi_cB_L5[7], lifted_b0_plus_b1_times_x_oBi_cB_L5[8], lifted_b0_plus_b1_times_x_oBi_cB_L5[9], lifted_b0_plus_b1_times_x_oBi_cB_L5[10], lifted_b0_plus_b1_times_x_oBi_cB_L5[11], lifted_b0_plus_b1_times_x_oBi_cB_L5[12], lifted_b0_plus_b1_times_x_oBi_cB_L5[13], lifted_b0_plus_b1_times_x_oBi_cB_L5[14], lifted_b0_plus_b1_times_x_oBi_cB_L5[15], lifted_b0_plus_b1_times_x_oBi_cB_L5[16], lifted_b0_plus_b1_times_x_oBi_cB_L5[17], lifted_b0_plus_b1_times_x_oBi_cB_L5[18], lifted_b0_plus_b1_times_x_oBi_cB_L5[19], lifted_b0_plus_b1_times_x_oBi_cB_L5[20], lifted_b0_plus_b1_times_x_oBi_cB_L5[21], lifted_b0_plus_b1_times_x_oBi_cB_L5[22], lifted_b0_plus_b1_times_x_oBi_cB_L5[23], lifted_b0_plus_b1_times_x_oBi_cB_L5[24], lifted_b0_plus_b1_times_x_oBi_cB_L5[25], lifted_b0_plus_b1_times_x_oBi_cB_L5[26], lifted_b0_plus_b1_times_x_oBi_cB_L5[27], lifted_b0_plus_b1_times_x_oBi_cB_L5[28], lifted_b0_plus_b1_times_x_oBi_cB_L5[29], lifted_b0_plus_b1_times_x_oBi_cB_L5[30], lifted_b0_plus_b1_times_x_oBi_cB_L5[31], lifted_b0_plus_b1_times_x_oBi_cB_L5[32], lifted_b0_plus_b1_times_x_oBi_cB_L5[33], lifted_b0_plus_b1_times_x_oBi_cB_L5[34], lifted_b0_plus_b1_times_x_oBi_cB_L5[35], lifted_b0_plus_b1_times_x_oBi_cB_L5[36], lifted_b0_plus_b1_times_x_oBi_cB_L5[37], lifted_b0_plus_b1_times_x_oBi_cB_L5[38], lifted_b0_plus_b1_times_x_oBi_cB_L5[39], lifted_b0_plus_b1_times_x_oBi_cB_L5[40], lifted_b0_plus_b1_times_x_oBi_cB_L5[41], lifted_b0_plus_b1_times_x_oBi_cB_L5[42], lifted_b0_plus_b1_times_x_oBi_cB_L5[43], lifted_b0_plus_b1_times_x_oBi_cB_L5[44], lifted_b0_plus_b1_times_x_oBi_cB_L5[45], lifted_b0_plus_b1_times_x_oBi_cB_L5[46], lifted_b0_plus_b1_times_x_oBi_cB_L5[47], lifted_b0_plus_b1_times_x_oBi_cB_L5[48], lifted_b0_plus_b1_times_x_oBi_cB_L5[49], lifted_b0_plus_b1_times_x_oBi_cB_L5[50], lifted_b0_plus_b1_times_x_oBi_cB_L5[51], lifted_b0_plus_b1_times_x_oBi_cB_L5[52], lifted_b0_plus_b1_times_x_oBi_cB_L5[53], lifted_b0_plus_b1_times_x_oBi_cB_L5[54], lifted_b0_plus_b1_times_x_oBi_cB_L5[55], lifted_b0_plus_b1_times_x_oBi_cB_L5[56], lifted_b0_plus_b1_times_x_oBi_cB_L5[57], lifted_b0_plus_b1_times_x_oBi_cB_L5[58], lifted_b0_plus_b1_times_x_oBi_cB_L5[59], lifted_b0_plus_b1_times_x_oBi_cB_L5[60], lifted_b0_plus_b1_times_x_oBi_cB_L5[61], lifted_b0_plus_b1_times_x_oBi_cB_L5[62], lifted_b0_plus_b1_times_x_oBi_cB_L5[63], lifted_b0_plus_b1_times_x_oBi_cB_L5[64], lifted_b0_plus_b1_times_x_oBi_cB_L5[65], lifted_b0_plus_b1_times_x_oBi_cB_L5[66], lifted_b0_plus_b1_times_x_oBi_cB_L5[67], lifted_b0_plus_b1_times_x_oBi_cB_L5[68], lifted_b0_plus_b1_times_x_oBi_cB_L5[69], lifted_b0_plus_b1_times_x_oBi_cB_L5[70], lifted_b0_plus_b1_times_x_oBi_cB_L5[71], lifted_b0_plus_b1_times_x_oBi_cB_L5[72], lifted_b0_plus_b1_times_x_oBi_cB_L5[73], lifted_b0_plus_b1_times_x_oBi_cB_L5[74], lifted_b0_plus_b1_times_x_oBi_cB_L5[75], lifted_b0_plus_b1_times_x_oBi_cB_L5[76], lifted_b0_plus_b1_times_x_oBi_cB_L5[77], lifted_b0_plus_b1_times_x_oBi_cB_L5[78], lifted_b0_plus_b1_times_x_oBi_cB_L5[79], lifted_b0_plus_b1_times_x_oBi_cB_L5[80], lifted_b0_plus_b1_times_x_oBi_cB_L5[81], lifted_b0_plus_b1_times_x_oBi_cB_L5[82], lifted_b0_plus_b1_times_x_oBi_cB_L5[83], lifted_b0_plus_b1_times_x_oBi_cB_L5[84], lifted_b0_plus_b1_times_x_oBi_cB_L5[85], lifted_b0_plus_b1_times_x_oBi_cB_L5[86], lifted_b0_plus_b1_times_x_oBi_cB_L5[87], lifted_b0_plus_b1_times_x_oBi_cB_L5[88], lifted_b0_plus_b1_times_x_oBi_cB_L5[89], lifted_b0_plus_b1_times_x_oBi_cB_L5[90], lifted_b0_plus_b1_times_x_oBi_cB_L5[91], lifted_b0_plus_b1_times_x_oBi_cB_L5[92], lifted_b0_plus_b1_times_x_oBi_cB_L5[93], lifted_b0_plus_b1_times_x_oBi_cB_L5[94], lifted_b0_plus_b1_times_x_oBi_cB_L5[95], lifted_b0_plus_b1_times_x_oBi_cB_L5[96], lifted_b0_plus_b1_times_x_oBi_cB_L5[97], lifted_b0_plus_b1_times_x_oBi_cB_L5[98], lifted_b0_plus_b1_times_x_oBi_cB_L5[99], lifted_b0_plus_b1_times_x_oBi_cB_L5[100], y[1], y[2], y[3], y[4], y[5], y[6], y[7], y[8], y[9], y[10], y[11], y[12], y[13], y[14], y[15], y[16], y[17], y[18], y[19], y[20], y[21], y[22], y[23], y[24], y[25], y[26], y[27], y[28], y[29], y[30], y[31], y[32], y[33], y[34], y[35], y[36], y[37], y[38], y[39], y[40], y[41], y[42], y[43], y[44], y[45], y[46], y[47], y[48], y[49], y[50], y[51], y[52], y[53], y[54], y[55], y[56], y[57], y[58], y[59], y[60], y[61], y[62], y[63], y[64], y[65], y[66], y[67], y[68], y[69], y[70], y[71], y[72], y[73], y[74], y[75], y[76], y[77], y[78], y[79], y[80], y[81], y[82], y[83], y[84], y[85], y[86], y[87], y[88], y[89], y[90], y[91], y[92], y[93], y[94], y[95], y[96], y[97], y[98], y[99], y[100],</code></pre>
+<pre class="r"><code>cRegrModel &lt;- compileNimble(regrModel)   # remember to compile model first</code></pre>
 <pre><code>## Compiling
 ##   [Note] This may take a minute.
 ##   [Note] Use &#39;showCompilerOutput = TRUE&#39; to see C++ compilation details.</code></pre>
@@ -896,10 +898,10 @@ system.time(optR &lt;- optim(c(0, 0, 1), rObjective$run, control = list(fnscale 
 ## Warning in dnorm(model$y[getNodeFunctionIndexedInfo(INDEXEDNODEINFO_, 1)], :
 ## NaNs produced</code></pre>
 <pre><code>##    user  system elapsed 
-##   8.434   0.000   8.434</code></pre>
+##   7.471   0.000   7.472</code></pre>
 <pre class="r"><code>system.time(optC &lt;- optim(c(0, 0, 1), cObjective$run, control = list(fnscale = -1)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.002   0.000   0.002</code></pre>
+##   0.002   0.000   0.003</code></pre>
 <pre class="r"><code>optR</code></pre>
 <pre><code>## $par
 ## [1] 0.2551346 0.5781320 0.2329039

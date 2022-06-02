@@ -545,7 +545,7 @@ that algorithms are implemented. They can also be used for</p>
 <ul>
 <li>user-defined BUGS distributions (already seen),</li>
 <li>user-defined BUGS functions (already seen)</li>
-<li>user-defined MCMC samplers (Module 9), and</li>
+<li>user-defined MCMC samplers (Module 8), and</li>
 <li>compiling parts of R (not shown), without using a model.</li>
 </ul>
 <p>But their main purpose is providing a way for developers to implement
@@ -601,7 +601,7 @@ graphical model by looking back at Module 2.</p>
 </div>
 <div id="some-notes" class="slide section level1">
 <h1>Some notes</h1>
-<p>We could compiled <code>calcDeps_regr</code>. Then <code>run</code>
+<p>We could compile <code>calcDeps_regr</code>. Then <code>run</code>
 would become a method of a C++ class.</p>
 <p>Notice that:</p>
 <ul>
@@ -724,18 +724,19 @@ you can use within a nimbleFunction.)</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>objective <span class="ot">&lt;-</span> <span class="fu">nimbleFunction</span>(</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">setup =</span> <span class="cf">function</span>(model, nodes) {</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>        calcNodes <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">getDependencies</span>(nodes)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        elements <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">expandNodeNames</span>(nodes, <span class="at">returnScalarComponents =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>        n <span class="ot">&lt;-</span> <span class="fu">length</span>(elements)</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    },</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">run =</span> <span class="cf">function</span>(<span class="at">par =</span> <span class="fu">double</span>(<span class="dv">1</span>)) {</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">returnType</span>(<span class="fu">double</span>(<span class="dv">0</span>))</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="fu">length</span>(par) <span class="sc">!=</span> n)</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>           <span class="fu">stop</span>(<span class="st">&quot;Input length does not match number of parameter elements.&quot;</span>)</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">values</span>(model, nodes) <span class="ot">&lt;&lt;-</span> par       <span class="co"># &lt;&lt;- assignment into non-local (nf) variables </span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>        ans <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">calculate</span>(calcNodes)  <span class="co"># &lt;-  local assignment </span></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(ans)</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">cat</span>(<span class="st">&quot;The calcNodes are &quot;</span>, <span class="fu">paste0</span>(calcNodes, <span class="at">sep =</span> <span class="st">&#39;,&#39;</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>        elements <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">expandNodeNames</span>(nodes, <span class="at">returnScalarComponents =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>        n <span class="ot">&lt;-</span> <span class="fu">length</span>(elements)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">run =</span> <span class="cf">function</span>(<span class="at">par =</span> <span class="fu">double</span>(<span class="dv">1</span>)) {</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">returnType</span>(<span class="fu">double</span>(<span class="dv">0</span>))</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="fu">length</span>(par) <span class="sc">!=</span> n)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>           <span class="fu">stop</span>(<span class="st">&quot;Input length does not match number of parameter elements.&quot;</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">values</span>(model, nodes) <span class="ot">&lt;&lt;-</span> par       <span class="co"># &lt;&lt;- assignment into non-local (nf) variables </span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>        ans <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">calculate</span>(calcNodes)  <span class="co"># &lt;-  local assignment </span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(ans)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>As discussed, this is actually a nimbleFunction <em>generator</em> –
 we can’t run it yet – we need to create a specialized instance of the
 nimbleFunction that is tailored for some model, in our case the
@@ -745,18 +746,19 @@ standard deviation must be positive.</p>
 </div>
 <div id="specializing-the-nimblefunction-to-the-model" class="slide section level1">
 <h1>Specializing the nimbleFunction to the model</h1>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>rObjective <span class="ot">&lt;-</span> <span class="fu">objective</span>(regrModel, <span class="fu">c</span>(<span class="st">&#39;b0&#39;</span>, <span class="st">&#39;b1&#39;</span>, <span class="st">&#39;sigma&#39;</span>))</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>cRegrModel <span class="ot">&lt;-</span> <span class="fu">compileNimble</span>(regrModel)   <span class="co"># remember to compile model first</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>rObjective <span class="ot">&lt;-</span> <span class="fu">objective</span>(regrModel, <span class="fu">c</span>(<span class="st">&#39;b0&#39;</span>, <span class="st">&#39;b1&#39;</span>, <span class="st">&#39;sigma&#39;</span>))</span></code></pre></div>
+<pre><code>## The calcNodes are  b0, b1, sigma, lifted_b0_plus_b1_times_x_oBi_cB_L5[1], lifted_b0_plus_b1_times_x_oBi_cB_L5[2], lifted_b0_plus_b1_times_x_oBi_cB_L5[3], lifted_b0_plus_b1_times_x_oBi_cB_L5[4], lifted_b0_plus_b1_times_x_oBi_cB_L5[5], lifted_b0_plus_b1_times_x_oBi_cB_L5[6], lifted_b0_plus_b1_times_x_oBi_cB_L5[7], lifted_b0_plus_b1_times_x_oBi_cB_L5[8], lifted_b0_plus_b1_times_x_oBi_cB_L5[9], lifted_b0_plus_b1_times_x_oBi_cB_L5[10], lifted_b0_plus_b1_times_x_oBi_cB_L5[11], lifted_b0_plus_b1_times_x_oBi_cB_L5[12], lifted_b0_plus_b1_times_x_oBi_cB_L5[13], lifted_b0_plus_b1_times_x_oBi_cB_L5[14], lifted_b0_plus_b1_times_x_oBi_cB_L5[15], lifted_b0_plus_b1_times_x_oBi_cB_L5[16], lifted_b0_plus_b1_times_x_oBi_cB_L5[17], lifted_b0_plus_b1_times_x_oBi_cB_L5[18], lifted_b0_plus_b1_times_x_oBi_cB_L5[19], lifted_b0_plus_b1_times_x_oBi_cB_L5[20], lifted_b0_plus_b1_times_x_oBi_cB_L5[21], lifted_b0_plus_b1_times_x_oBi_cB_L5[22], lifted_b0_plus_b1_times_x_oBi_cB_L5[23], lifted_b0_plus_b1_times_x_oBi_cB_L5[24], lifted_b0_plus_b1_times_x_oBi_cB_L5[25], lifted_b0_plus_b1_times_x_oBi_cB_L5[26], lifted_b0_plus_b1_times_x_oBi_cB_L5[27], lifted_b0_plus_b1_times_x_oBi_cB_L5[28], lifted_b0_plus_b1_times_x_oBi_cB_L5[29], lifted_b0_plus_b1_times_x_oBi_cB_L5[30], lifted_b0_plus_b1_times_x_oBi_cB_L5[31], lifted_b0_plus_b1_times_x_oBi_cB_L5[32], lifted_b0_plus_b1_times_x_oBi_cB_L5[33], lifted_b0_plus_b1_times_x_oBi_cB_L5[34], lifted_b0_plus_b1_times_x_oBi_cB_L5[35], lifted_b0_plus_b1_times_x_oBi_cB_L5[36], lifted_b0_plus_b1_times_x_oBi_cB_L5[37], lifted_b0_plus_b1_times_x_oBi_cB_L5[38], lifted_b0_plus_b1_times_x_oBi_cB_L5[39], lifted_b0_plus_b1_times_x_oBi_cB_L5[40], lifted_b0_plus_b1_times_x_oBi_cB_L5[41], lifted_b0_plus_b1_times_x_oBi_cB_L5[42], lifted_b0_plus_b1_times_x_oBi_cB_L5[43], lifted_b0_plus_b1_times_x_oBi_cB_L5[44], lifted_b0_plus_b1_times_x_oBi_cB_L5[45], lifted_b0_plus_b1_times_x_oBi_cB_L5[46], lifted_b0_plus_b1_times_x_oBi_cB_L5[47], lifted_b0_plus_b1_times_x_oBi_cB_L5[48], lifted_b0_plus_b1_times_x_oBi_cB_L5[49], lifted_b0_plus_b1_times_x_oBi_cB_L5[50], lifted_b0_plus_b1_times_x_oBi_cB_L5[51], lifted_b0_plus_b1_times_x_oBi_cB_L5[52], lifted_b0_plus_b1_times_x_oBi_cB_L5[53], lifted_b0_plus_b1_times_x_oBi_cB_L5[54], lifted_b0_plus_b1_times_x_oBi_cB_L5[55], lifted_b0_plus_b1_times_x_oBi_cB_L5[56], lifted_b0_plus_b1_times_x_oBi_cB_L5[57], lifted_b0_plus_b1_times_x_oBi_cB_L5[58], lifted_b0_plus_b1_times_x_oBi_cB_L5[59], lifted_b0_plus_b1_times_x_oBi_cB_L5[60], lifted_b0_plus_b1_times_x_oBi_cB_L5[61], lifted_b0_plus_b1_times_x_oBi_cB_L5[62], lifted_b0_plus_b1_times_x_oBi_cB_L5[63], lifted_b0_plus_b1_times_x_oBi_cB_L5[64], lifted_b0_plus_b1_times_x_oBi_cB_L5[65], lifted_b0_plus_b1_times_x_oBi_cB_L5[66], lifted_b0_plus_b1_times_x_oBi_cB_L5[67], lifted_b0_plus_b1_times_x_oBi_cB_L5[68], lifted_b0_plus_b1_times_x_oBi_cB_L5[69], lifted_b0_plus_b1_times_x_oBi_cB_L5[70], lifted_b0_plus_b1_times_x_oBi_cB_L5[71], lifted_b0_plus_b1_times_x_oBi_cB_L5[72], lifted_b0_plus_b1_times_x_oBi_cB_L5[73], lifted_b0_plus_b1_times_x_oBi_cB_L5[74], lifted_b0_plus_b1_times_x_oBi_cB_L5[75], lifted_b0_plus_b1_times_x_oBi_cB_L5[76], lifted_b0_plus_b1_times_x_oBi_cB_L5[77], lifted_b0_plus_b1_times_x_oBi_cB_L5[78], lifted_b0_plus_b1_times_x_oBi_cB_L5[79], lifted_b0_plus_b1_times_x_oBi_cB_L5[80], lifted_b0_plus_b1_times_x_oBi_cB_L5[81], lifted_b0_plus_b1_times_x_oBi_cB_L5[82], lifted_b0_plus_b1_times_x_oBi_cB_L5[83], lifted_b0_plus_b1_times_x_oBi_cB_L5[84], lifted_b0_plus_b1_times_x_oBi_cB_L5[85], lifted_b0_plus_b1_times_x_oBi_cB_L5[86], lifted_b0_plus_b1_times_x_oBi_cB_L5[87], lifted_b0_plus_b1_times_x_oBi_cB_L5[88], lifted_b0_plus_b1_times_x_oBi_cB_L5[89], lifted_b0_plus_b1_times_x_oBi_cB_L5[90], lifted_b0_plus_b1_times_x_oBi_cB_L5[91], lifted_b0_plus_b1_times_x_oBi_cB_L5[92], lifted_b0_plus_b1_times_x_oBi_cB_L5[93], lifted_b0_plus_b1_times_x_oBi_cB_L5[94], lifted_b0_plus_b1_times_x_oBi_cB_L5[95], lifted_b0_plus_b1_times_x_oBi_cB_L5[96], lifted_b0_plus_b1_times_x_oBi_cB_L5[97], lifted_b0_plus_b1_times_x_oBi_cB_L5[98], lifted_b0_plus_b1_times_x_oBi_cB_L5[99], lifted_b0_plus_b1_times_x_oBi_cB_L5[100], y[1], y[2], y[3], y[4], y[5], y[6], y[7], y[8], y[9], y[10], y[11], y[12], y[13], y[14], y[15], y[16], y[17], y[18], y[19], y[20], y[21], y[22], y[23], y[24], y[25], y[26], y[27], y[28], y[29], y[30], y[31], y[32], y[33], y[34], y[35], y[36], y[37], y[38], y[39], y[40], y[41], y[42], y[43], y[44], y[45], y[46], y[47], y[48], y[49], y[50], y[51], y[52], y[53], y[54], y[55], y[56], y[57], y[58], y[59], y[60], y[61], y[62], y[63], y[64], y[65], y[66], y[67], y[68], y[69], y[70], y[71], y[72], y[73], y[74], y[75], y[76], y[77], y[78], y[79], y[80], y[81], y[82], y[83], y[84], y[85], y[86], y[87], y[88], y[89], y[90], y[91], y[92], y[93], y[94], y[95], y[96], y[97], y[98], y[99], y[100],</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>cRegrModel <span class="ot">&lt;-</span> <span class="fu">compileNimble</span>(regrModel)   <span class="co"># remember to compile model first</span></span></code></pre></div>
 <pre><code>## Compiling
 ##   [Note] This may take a minute.
 ##   [Note] Use &#39;showCompilerOutput = TRUE&#39; to see C++ compilation details.</code></pre>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>cObjective <span class="ot">&lt;-</span> <span class="fu">compileNimble</span>(rObjective, <span class="at">project =</span> regrModel)   <span class="co"># now compile the nimbleFunction</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>cObjective <span class="ot">&lt;-</span> <span class="fu">compileNimble</span>(rObjective, <span class="at">project =</span> regrModel)   <span class="co"># now compile the nimbleFunction</span></span></code></pre></div>
 <pre><code>## Compiling
 ##   [Note] This may take a minute.
 ##   [Note] Use &#39;showCompilerOutput = TRUE&#39; to see C++ compilation details.</code></pre>
 <p>Now let’s try using it. Any thoughts why the warnings occur?</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(optR <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>), rObjective<span class="sc">$</span>run, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">fnscale =</span> <span class="sc">-</span><span class="dv">1</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(optR <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>), rObjective<span class="sc">$</span>run, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">fnscale =</span> <span class="sc">-</span><span class="dv">1</span>)))</span></code></pre></div>
 <pre><code>## Warning in dnorm(model$y[getNodeFunctionIndexedInfo(INDEXEDNODEINFO_, 1)], :
 ## NaNs produced
 
@@ -1057,11 +1059,11 @@ standard deviation must be positive.</p>
 ## Warning in dnorm(model$y[getNodeFunctionIndexedInfo(INDEXEDNODEINFO_, 1)], :
 ## NaNs produced</code></pre>
 <pre><code>##    user  system elapsed 
-##   8.478   0.000   8.479</code></pre>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(optC <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>), cObjective<span class="sc">$</span>run, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">fnscale =</span> <span class="sc">-</span><span class="dv">1</span>)))</span></code></pre></div>
+##   7.386   0.000   7.417</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(optC <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>), cObjective<span class="sc">$</span>run, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">fnscale =</span> <span class="sc">-</span><span class="dv">1</span>)))</span></code></pre></div>
 <pre><code>##    user  system elapsed 
 ##   0.002   0.000   0.003</code></pre>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>optR</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>optR</span></code></pre></div>
 <pre><code>## $par
 ## [1] 0.2551346 0.5781320 0.2329039
 ## 
@@ -1077,7 +1079,7 @@ standard deviation must be positive.</p>
 ## 
 ## $message
 ## NULL</code></pre>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>optC</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>optC</span></code></pre></div>
 <pre><code>## $par
 ## [1] 0.2551346 0.5781320 0.2329039
 ## 
@@ -1101,21 +1103,21 @@ standard deviations.</p>
 <p>Modify the nimbleFunction run function to work on the log scale for
 <code>sigma</code>, by providing a second argument that indicates which
 elements are being provided on the log scale.</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>objective <span class="ot">&lt;-</span> <span class="fu">nimbleFunction</span>(</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">setup =</span> <span class="cf">function</span>(model, nodes) {</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>        calcNodes <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">getDependencies</span>(nodes)</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>        elements <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">expandNodeNames</span>(nodes, <span class="at">returnScalarComponents =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>        n <span class="ot">&lt;-</span> <span class="fu">length</span>(elements)</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    },</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">run =</span> <span class="cf">function</span>(<span class="at">par =</span> <span class="fu">double</span>(<span class="dv">1</span>), <span class="at">logscale =</span> ???) {</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">returnType</span>(<span class="fu">double</span>(<span class="dv">0</span>))</span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="fu">length</span>(par) <span class="sc">!=</span> n)</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>           <span class="fu">stop</span>(<span class="st">&quot;Input length does not match number of parameter elements.&quot;</span>)</span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">values</span>(model, nodes) <span class="ot">&lt;&lt;-</span> par       <span class="co"># &lt;&lt;- assignment into non-local (nf) variables </span></span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>        ans <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">calculate</span>(calcNodes)  <span class="co"># &lt;-  local assignment </span></span>
-<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(ans)</span>
-<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>objective <span class="ot">&lt;-</span> <span class="fu">nimbleFunction</span>(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">setup =</span> <span class="cf">function</span>(model, nodes) {</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>        calcNodes <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">getDependencies</span>(nodes)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>        elements <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">expandNodeNames</span>(nodes, <span class="at">returnScalarComponents =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>        n <span class="ot">&lt;-</span> <span class="fu">length</span>(elements)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">run =</span> <span class="cf">function</span>(<span class="at">par =</span> <span class="fu">double</span>(<span class="dv">1</span>), <span class="at">logscale =</span> ???) {</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">returnType</span>(<span class="fu">double</span>(<span class="dv">0</span>))</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="fu">length</span>(par) <span class="sc">!=</span> n)</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>           <span class="fu">stop</span>(<span class="st">&quot;Input length does not match number of parameter elements.&quot;</span>)</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">values</span>(model, nodes) <span class="ot">&lt;&lt;-</span> par       <span class="co"># &lt;&lt;- assignment into non-local (nf) variables </span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>        ans <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">calculate</span>(calcNodes)  <span class="co"># &lt;-  local assignment </span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(ans)</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 
   <!-- dynamically load mathjax for compatibility with self-contained -->

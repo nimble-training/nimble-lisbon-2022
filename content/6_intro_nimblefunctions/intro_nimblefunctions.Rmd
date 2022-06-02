@@ -26,7 +26,7 @@ library(nimble)
 
  - user-defined BUGS distributions (already seen),
  - user-defined BUGS functions (already seen)
- - user-defined MCMC samplers (Module 9), and
+ - user-defined MCMC samplers (Module 8), and
  - compiling parts of R (not shown), without using a model.
 
 But their main purpose is providing a way for developers to implement algorithms.
@@ -83,7 +83,7 @@ calcDeps_regr$run()   ## second stage: run code
 
 # Some notes
 
-We could compiled `calcDeps_regr`.  Then `run` would become a method of a C++ class.
+We could compile `calcDeps_regr`.  Then `run` would become a method of a C++ class.
 
 Notice that:
 
@@ -160,6 +160,7 @@ Plan:
 objective <- nimbleFunction(
     setup = function(model, nodes) {
         calcNodes <- model$getDependencies(nodes)
+        cat("The calcNodes are ", paste0(calcNodes, sep = ','), "\n")
         elements <- model$expandNodeNames(nodes, returnScalarComponents = TRUE)
         n <- length(elements)
     },
