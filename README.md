@@ -86,7 +86,7 @@ install_github("nimble-dev/nimble", ref = "devel", subdir = "packages/nimble")
 Some of the packages we will use (beyond those automatically installed with `nimble`) can be installed as follows:
 
 ```
-install.packages(c("mcmcplots", "CARBayesdata", "sp", "spdep", "classInt", "coda"))
+install.packages(c("mcmcplots", "CARBayesdata", "sp", "spdep", "classInt", "coda", "mvtnorm", "rjags"))
 ```
 
 `compareMCMCs` is a package in development that is not yet on CRAN:
